@@ -5,7 +5,7 @@
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <RootNamespace>PeerReviewWebsite</RootNamespace>
-    <AssemblyName>PeerReviewWebsite</AssemblyName>
+    <AssemblyName>PeerReviewWebsiteCS4992</AssemblyName>
   </PropertyGroup>
 
 	<ItemGroup>

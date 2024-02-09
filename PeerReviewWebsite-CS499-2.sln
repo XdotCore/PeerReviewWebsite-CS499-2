@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeerReviewWebsite-CS499-2", "PeerReviewWebsite-CS499-2\PeerReviewWebsite-CS499-2.csproj", "{E7433D10-91A0-4405-8F89-A2F7D5D0F503}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PeerReviewWebsite-CS499-2", "PeerReviewWebsite-CS499-2\PeerReviewWebsite-CS499-2.csproj", "{E7433D10-91A0-4405-8F89-A2F7D5D0F503}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
