@@ -1,0 +1,46 @@
+﻿
+h1 {
+    text-align: center;
+}
+
+h2 {
+    text-align: center;
+}
+
+button {
+    background-color: #030804;
+    color: white;
+    padding: 14px 20px;
+    border-radius: 50px;
+    margin: 7px auto;
+    width: 75%;
+    font-size: 12px;
+    text-align: center;
+    border: 2px solid black;
+}
+
+input {
+    margin: auto;
+    border-radius: 5px;
+    padding: 14px 20px;
+    width: 75%;
+    box-sizing: border-box;
+    border: 2px solid black;
+}
+
+label {
+    color: #FF0000;
+    font-size: 20px;
+}
+
+form {
+    width: 35rem;
+    margin: auto;
+    color: whitesmoke;
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(85, 82, 82, 0.582);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.125);
+    text-align: center;
+}

@@ -19,8 +19,6 @@ namespace PeerReviewWebsite.Classes.Data {
         /// <returns><see langword="null"/> if an exception is caught, otherwise a <see cref="Stream"/> that contains the resource</returns>
         /// <remarks>You are responsible for disposing the stream, use <see langword="using"/></remarks>
         private static Stream GetResourceStream(string resourceName) {
-            var a = thisAssembly.GetManifestResourceNames();
-
             string fullName = $"{assemblyName}.{resourceName}";
 
             try {
