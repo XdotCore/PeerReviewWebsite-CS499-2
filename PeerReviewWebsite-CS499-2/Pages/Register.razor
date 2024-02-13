@@ -1,0 +1,116 @@
+﻿@page "/register"
+
+<h1>Registration Form</h1>
+<head>
+    <title>Register</title>
+    <style>
+        <!--Similar but slightly different style than Login Page-->
+        h1 {
+            text-align: center;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        button {
+            background-color: #030804;
+            color: white;
+            padding: 14px 20px;
+            border-radius: 50px;
+            margin: 7px auto;
+            width: 75%;
+            font-size: 12px;
+            text-align: center;
+            border: 2px solid black;
+        }
+
+        input {
+            margin: auto;
+            border-radius: 5px;
+            padding: 14px 20px;
+            width: 75%;
+            box-sizing: border-box;
+            border: 2px solid black;
+        }
+
+        label {
+            color: #FF0000;
+            font-size: 20px;
+        }
+
+        form {
+            width: 35rem;
+            margin: auto;
+            color: whitesmoke;
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            background-color: rgba(85, 82, 82, 0.582);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.125);
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <form action="">
+        <div>
+            <h2>Create a New Account</h2>
+        </div>
+
+        <div>
+            <!-- First Name -->
+            <input type="text" placeholder="First Name" id="firstname" @bind-value=@fname><br><br>
+
+            <!-- Last Name -->
+            <input type="text" placeholder="Last Name" id="lastname" @bind-value=@lname required><br><br>
+
+            <!-- Password -->
+            <input type="password" placeholder="Password" id="password" @bind-value=@psword required><br><br>
+
+            <!-- Confirm Password -->
+            <input type="password" placeholder="Confirm Password" id="conpassword" @bind-value=@conpassword required><br><br>
+
+            <button type="submit" class="btn btn-primary" @onclick="confirmPassword">Create Account</button><br>
+            <p>Already have an account?  <NavLink class="nav-link" href="/">Login</NavLink></p>
+        </div>
+    </form>
+
+    <!--Field that appears when passwords do not match [this isn't finished/implemented]-->
+    <br>
+    <form hidden id="errorForm">
+        <br>
+        <label id="pswordlabel" for="password">! Passwords didn't match</label>
+        <br><br>
+    </form>
+
+</body>
+
+@code {
+
+    private string fname = "";
+    private string lname = "";
+    private string psword = "";
+    private string conpassword = "";
+
+    <!--Checking that input is being properly grabbed-->
+    private void PrintInput()
+    {
+        Console.Write("Username entered was " + fname);
+        Console.Write("Password entered was " + lname);
+        Console.Write("Password entered was" + psword);
+        Console.Write("Confirm Password was" + conpassword);
+    }
+
+    <!--Check that the Passowords match[this isn't finished]-->
+    private void confirmPassword()
+    {
+        if (String.Equals(psword, conpassword))
+            PrintInput();
+
+        else
+            Console.Write("Passwords did not match");
+    }
+
+}
