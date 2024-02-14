@@ -1,4 +1,6 @@
 ﻿@page "/register"
+@using PeerReviewWebsite.Classes.Data.Login
+@inherits OwningComponentBase<UserService>
 
 <h1>Registration Form</h1>
 <head>
@@ -13,18 +15,32 @@
 
         <div>
             <!-- First Name -->
-            <input type="text" placeholder="First Name" id="firstname" @bind-value=@fname><br><br>
+            <input type="text" placeholder="First Name" id="firstname" @bind-value=@firstName />
+            <br />
+            <br />
 
             <!-- Last Name -->
-            <input type="text" placeholder="Last Name" id="lastname" @bind-value=@lname required><br><br>
+            <input type="text" placeholder="Last Name" id="lastname" @bind-value=@lastName required />
+            <br />
+            <br />
+
+            <!-- Username -->
+            <input type="text" placeholder="Username" id="username" @bind-value=@username required />
+            <br />
+            <br />
 
             <!-- Password -->
-            <input type="password" placeholder="Password" id="password" @bind-value=@psword required><br><br>
+            <input type="password" placeholder="Password" id="password" @bind-value=@password required />
+            <br />
+            <br />
 
             <!-- Confirm Password -->
-            <input type="password" placeholder="Confirm Password" id="conpassword" @bind-value=@conpassword required><br><br>
+            <input type="password" placeholder="Confirm Password" id="conpassword" @bind-value=@conPassword required />
+            <br />
+            <br />
 
-            <button type="submit" class="btn btn-primary" @onclick="confirmPassword">Create Account</button><br>
+            <button type="button" class="btn btn-primary" @onclick="RegisterUser">Create Account</button>
+            <br />
             <p>Already have an account?  <NavLink class="nav-link" href="/">Login</NavLink></p>
         </div>
     </form>
@@ -41,28 +57,51 @@
 
 @code {
 
-    private string fname = "";
-    private string lname = "";
-    private string psword = "";
-    private string conpassword = "";
+    private string firstName = "";
+    private string lastName = "";
+    private string username = "";
+    private string password = "";
+    private string conPassword = "";
 
-    <!--Checking that input is being properly grabbed-->
+    /// <summary>
+    /// Checking that input is being properly grabbed
+    /// </summary>
     private void PrintInput()
     {
-        Console.Write("Username entered was " + fname);
-        Console.Write("Password entered was " + lname);
-        Console.Write("Password entered was" + psword);
-        Console.Write("Confirm Password was" + conpassword);
+        Console.WriteLine("First name entered was " + firstName);
+        Console.WriteLine("Last name entered was " + lastName);
+        Console.WriteLine("Username entered was " + username);
+        Console.WriteLine("Password entered was " + password);
+        Console.WriteLine("Confirm Password was " + conPassword);
     }
 
-    <!--Check that the Passowords match[this isn't finished]-->
-    private void confirmPassword()
-    {
-        if (String.Equals(psword, conpassword))
-            PrintInput();
+    /// <summary>
+    /// Registers the user to the database
+    /// </summary>
+    private async Task RegisterUser() {
+        if (!ConfirmPassword())
+            return;
 
-        else
-            Console.Write("Passwords did not match");
+        await Service.CreateUserAsync(new User {
+            Username = username,
+            Password = password
+        });
+
+        PrintInput();
+    }
+
+    /// <summary>
+    /// Check that the Passowords match
+    /// </summary>
+    /// <returns>True if matching, false otherwise</returns>
+    private bool ConfirmPassword()
+    {
+        if (String.Equals(password, conPassword)) {
+            return true;
+        } else {
+            Console.WriteLine("Passwords did not match");
+            return false;
+        }
     }
 
 }

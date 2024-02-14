@@ -16,25 +16,43 @@
 
         <div>
             <!-- Add the Username & Password textfields and interative buttons-->
-            <input type="text" placeholder="Username" id="username" @bind-value=@uname required><br><br>
-            <input type="password" placeholder="Password" id="password" @bind-value=@psword required><br><br><br>
+            <input type="text" placeholder="Username" id="username" @bind-value=@username required><br><br>
+            <input type="password" placeholder="Password" id="password" @bind-value=@password required><br><br><br>
 
-            <button type="submit" class="btn btn-primary" @onclick="PrintInput">Login</button><br>
+            <!-- Don't use type="submit"! it breaks things!-->
+            <button type="button" class="btn btn-primary" @onclick="LogInUser">Login</button><br>
             <p>Don't have an account?  <NavLink class="nav-link" href="register">Register</NavLink></p>
         </div>
     </form>
 </body>
 
 @code {
-    
-    public string uname = "";
-    private string psword = "";
 
-    <!--Checking that input is being properly grabbed-->
+    public string username = "";
+    private string password = "";
+
+    /// <summary>
+    /// Gets the user, if it exists, then logs them in
+    /// </summary>
+    private async Task LogInUser() {
+        User user = await Service.GetUserAsync(username);
+        if (user is null) {
+            Console.WriteLine($"Could not find user with the given username: {username}");
+            return;
+        }
+
+        Console.WriteLine("Found user!");
+
+        PrintInput();
+    }
+
+    /// <summary>
+    /// Checking that input is being properly grabbed
+    /// </summary>
     private void PrintInput()
     {
-        Console.Write("Username entered was " + uname + "\n");
-        Console.Write("Password entered was " + psword + "\n");
+        Console.WriteLine("Username entered was " + username);
+        Console.WriteLine("Password entered was " + password);
     }
 
 }

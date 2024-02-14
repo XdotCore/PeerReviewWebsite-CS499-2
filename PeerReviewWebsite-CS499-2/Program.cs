@@ -1,10 +1,22 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PeerReviewWebsite.Classes.Data;
+using PeerReviewWebsite.Classes.Data.Login;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+
+// Add connections
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+builder.Services.AddDbContext<WebsiteDbContext>(options => options.UseSqlServer(connectionString));
+
+// Add services
+builder.Services.AddScoped<UserService>();
 
 var app = builder.Build();
 
@@ -21,5 +33,14 @@ app.UseRouting();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
+
+// Ensure database is created
+// TODO: Possibly move to migrations when coming to release
+using IServiceScope scope = app.Services.CreateScope();
+WebsiteDbContext dbContext = scope.ServiceProvider.GetRequiredService<WebsiteDbContext>();
+#if DEBUG
+dbContext.Database.EnsureDeleted();
+#endif
+dbContext.Database.EnsureCreated();
 
 app.Run();
