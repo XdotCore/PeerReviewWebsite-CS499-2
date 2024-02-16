@@ -16,7 +16,7 @@ button {
     width: 75%;
     font-size: 12px;
     text-align: center;
-    border: 2px solid black;
+    border: 2px white;
 }
 
 input {
@@ -25,7 +25,7 @@ input {
     padding: 14px 20px;
     width: 75%;
     box-sizing: border-box;
-    border: 2px solid black;
+    border: 2px white;
 }
 
 label {

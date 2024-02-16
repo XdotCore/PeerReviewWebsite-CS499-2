@@ -18,7 +18,12 @@
         <div>
             <!-- Add the Username & Password textfields and interative buttons-->
             <input type="text" placeholder="Username" id="username" @bind-value=@username required><br><br>
-            <input type="password" placeholder="Password" id="password" @bind-value=@password required><br><br><br>
+            <input type="password" placeholder="Password" id="password" @bind-value=@password required><br><br>
+
+            <!--Error Message: only appears when the password input does not match-->
+            <label id="pswordlabel" for="password" hidden="@(!ShowMessage)">ERROR: Username or Password entered incorrectly</label>
+            <br />
+            
 
             <!-- Don't use type="submit"! it breaks things!-->
             <button type="button" class="btn btn-primary" @onclick="LogInUser">Login</button><br>
@@ -31,19 +36,21 @@
 
     public string username = "";
     private string password = "";
+    bool ShowMessage { get; set; } = false; 
 
     /// <summary>
     /// Gets the user, if it exists, then logs them in
     /// </summary>
     private async Task LogInUser() {
         User user = await Service.GetUserAsync(username);
-        if (user is null) {
-            Console.WriteLine($"Could not find user with the given username: {username}");
+        if (user is null || user.Password != password) {
+            Console.WriteLine($"Could not find user with the given username: {username} or password was incorrect");
+            ShowMessage = true;
             return;
         }
 
         Console.WriteLine("Found user!");
-
+        ShowMessage = false;
         PrintInput();
         UriHelper.NavigateTo($"/profile/{username}");
     }
