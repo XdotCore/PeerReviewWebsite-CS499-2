@@ -1,5 +1,6 @@
 ﻿@page "/register"
 @using PeerReviewWebsite.Classes.Data.Login
+@inject NavigationManager UriHelper
 @inherits OwningComponentBase<UserService>
 
 <h1>Registration Form</h1>
@@ -39,6 +40,11 @@
             <br />
             <br />
 
+            <!--Error Message: only appears when the password input does not match-->
+            <label id="pswordlabel" for="password" hidden="@(!ShowMessage)">ERROR: Passwords didn't match</label>
+            <br />
+            <br />
+
             <button type="button" class="btn btn-primary" @onclick="RegisterUser">Create Account</button>
             <br />
             <p>Already have an account?  <NavLink class="nav-link" href="/">Login</NavLink></p>
@@ -62,6 +68,7 @@
     private string username = "";
     private string password = "";
     private string conPassword = "";
+    bool ShowMessage { get; set; } = false;
 
     /// <summary>
     /// Checking that input is being properly grabbed
@@ -80,14 +87,21 @@
     /// </summary>
     private async Task RegisterUser() {
         if (!ConfirmPassword())
+        {
+            ShowMessage = true;
             return;
+        }
 
-        await Service.CreateUserAsync(new User {
-            Username = username,
-            Password = password
-        });
-
+        await Service.CreateUserAsync(new User
+            {
+                Username = username,
+                Password = password
+            });
+        
+        // Navigate to the new profile page
+        ShowMessage = false;
         PrintInput();
+        UriHelper.NavigateTo($"/profile/{username}");
     }
 
     /// <summary>

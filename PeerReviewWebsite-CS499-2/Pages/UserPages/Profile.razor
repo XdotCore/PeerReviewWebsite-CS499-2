@@ -1,0 +1,31 @@
+﻿@page "/profile/{Username}"
+@using PeerReviewWebsite.Classes.Data.Login
+@inherits OwningComponentBase<UserService>
+
+<h1>Hello @Username</h1>
+<h2> Profile Page </h2>
+
+@code {
+    [Parameter]
+    public string Username { get; set; }
+
+    // <summary>
+    //  Finds the user and gathers their information from database (isn't called to do anything yet)
+    // </summary>
+    private async Task findUser()
+    {
+        // Find user information in the database
+        User user = await Service.GetUserAsync(Username);
+        if (user is null)
+        {
+            Console.WriteLine($"Could not find user with the given username: {Username}");
+            return;
+        }
+
+        // Checking that database info can be used
+        Console.WriteLine("User Info:");
+        Console.WriteLine("User ID: " + user.Id);
+        Console.WriteLine("Username: " + user.Username);
+        Console.WriteLine("User password" + user.Password);
+    }
+}

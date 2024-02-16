@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using PeerReviewWebsite.Classes.Data.Login
+@inject NavigationManager UriHelper
 @inherits OwningComponentBase<UserService>
 
 <h1> Welcome to Online Peer Review! </h1>
@@ -44,6 +45,7 @@
         Console.WriteLine("Found user!");
 
         PrintInput();
+        UriHelper.NavigateTo($"/profile/{username}");
     }
 
     /// <summary>
