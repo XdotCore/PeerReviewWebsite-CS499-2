@@ -3,12 +3,10 @@
 @inject NavigationManager UriHelper
 @inherits OwningComponentBase<UserService>
 
-<h1>Registration Form</h1>
-<head>
-    <title>Register</title>
-</head>
+<title>Register</title>
 
 <body>
+    <h1>Registration Form</h1>
     <form action="">
         <div>
             <h2>Create a New Account</h2>
@@ -97,8 +95,10 @@
         username = firstName + lastName;
         await Service.CreateUserAsync(new User
             {
-                
+                FirstName = firstName,
+                LastName = lastName,
                 Username = username,
+                Email = email,
                 Password = password
             });
         

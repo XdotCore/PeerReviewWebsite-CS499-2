@@ -16,7 +16,10 @@ namespace PeerReviewWebsite.Classes.Data {
             modelBuilder.Entity<User>(entity => {
                 entity.ToTable("Users");
                 entity.HasKey(e => e.Id);
+                entity.Property(e => e.FirstName);
+                entity.Property(e => e.LastName);
                 entity.Property(e => e.Username);
+                entity.Property(e => e.Email);  
                 entity.Property(e => e.Password);
             });
         }
