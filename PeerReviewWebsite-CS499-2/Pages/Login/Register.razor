@@ -1,4 +1,5 @@
 ﻿@page "/register"
+@using System.Text.RegularExpressions;
 @using PeerReviewWebsite.Classes.Data.Login
 @inject NavigationManager UriHelper
 @inherits OwningComponentBase<UserService>
@@ -29,7 +30,7 @@
             <br />
 
             <!-- Password -->
-            <input type="password" placeholder="Password" id="password" @bind-value=@password required />
+            <input type="password" placeholder="Password" id="password" @bind-value=@password pattern="[A-Za-z]{3}" required />
             <br />
             <br />
 
@@ -38,8 +39,12 @@
             <br />
             <br />
 
-            <!--Error Message: only appears when the password input does not match-->
-            <label id="pswordlabel" for="password" hidden="@(!ShowMessage)">ERROR: Passwords didn't match</label>
+            <!--Password Error Message: only appears when the password input does not match-->
+            <label id="pswordlabel" for="password" hidden="@(!pswrdMessage)">ERROR: Passwords didn't match</label>
+            <br />
+
+            <!--Email Error Message: only appears when email input does not have a valid format-->
+            <label id="emaillabel" for="email" hidden="@(!emailMessage)">ERROR: Invalid Email</label>
             <br />
             <br />
 
@@ -67,7 +72,8 @@
     private string email = "";
     private string password = "";
     private string conPassword = "";
-    bool ShowMessage { get; set; } = false;
+    bool pswrdMessage { get; set; } = false;
+    bool emailMessage { get; set; } = false;
 
     /// <summary>
     /// Checking that input is being properly grabbed
@@ -86,9 +92,15 @@
     /// Registers the user to the database
     /// </summary>
     private async Task RegisterUser() {
+        pswrdMessage = false;
+        emailMessage = false;
         if (!ConfirmPassword())
         {
-            ShowMessage = true;
+            pswrdMessage = true;
+            return;
+        } else if (!ValidateEmail())
+        {
+            emailMessage = true;
             return;
         }
 
@@ -101,15 +113,14 @@
                 Email = email,
                 Password = password
             });
-        
+
         // Navigate to the new profile page
-        ShowMessage = false;
         PrintInput();
         UriHelper.NavigateTo($"/profile/{username}");
     }
 
     /// <summary>
-    /// Check that the Passowords match
+    /// Check that the Passwords match
     /// </summary>
     /// <returns>True if matching, false otherwise</returns>
     private bool ConfirmPassword()
@@ -118,6 +129,24 @@
             return true;
         } else {
             Console.WriteLine("Passwords did not match");
+            return false;
+        }
+    }
+
+    /// <summary>
+    ///  Check that email input has valid email format
+    /// </summary>
+    private bool ValidateEmail()
+    {
+        string emailFormat = @"^([a-zA-Z])+[^@\s]+@([a-zA-Z])+\.[^@\s]+$";
+
+        if (Regex.IsMatch(email, emailFormat))
+        {
+            return true;
+        }
+        else  
+        {
+            Console.WriteLine("Invalid Email was entered");
             return false;
         }
     }
