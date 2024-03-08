@@ -11,10 +11,10 @@ namespace PeerReviewWebsite.Classes.Data.Login {
         /// <summary>
         /// Gets the <see cref="User"/> with the given username
         /// </summary>
-        /// <param name="username">The username of the <see cref="User"/></param>
+        /// <param name="email">The username of the <see cref="User"/></param>
         /// <returns>The <see cref="User"/> with the given username, <see langword="null"/> if not found</returns>
-        public async Task<User> GetUserAsync(string username) =>
-            await context.Users.Where(d => d.Username == username).AsNoTracking().FirstOrDefaultAsync();
+        public async Task<User> GetUserAsync(string email) =>
+            await context.Users.Where(d => d.Email == email).AsNoTracking().FirstOrDefaultAsync();
 
         /// <summary>
         /// Adds the <see cref="User"/> account

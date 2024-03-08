@@ -18,7 +18,6 @@ namespace PeerReviewWebsite.Classes.Data {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.FirstName);
                 entity.Property(e => e.LastName);
-                entity.Property(e => e.Username);
                 entity.Property(e => e.Email);  
                 entity.Property(e => e.Password);
             });

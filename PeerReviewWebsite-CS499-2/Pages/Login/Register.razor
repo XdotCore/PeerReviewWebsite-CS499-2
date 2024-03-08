@@ -24,7 +24,7 @@
             <br />
             <br />
 
-            <!-- Username -->
+            <!-- Email -->
             <input type="email" placeholder="Email" id="email" @bind-value=@email required />
             <br />
             <br />
@@ -54,21 +54,12 @@
         </div>
     </form>
 
-    <!--Field that appears when passwords do not match [this isn't finished/implemented]-->
-    <br>
-    <form hidden id="errorForm">
-        <br>
-        <label id="pswordlabel" for="password">! Passwords didn't match</label>
-        <br><br>
-    </form>
-
 </body>
 
 @code {
 
     private string firstName = "";
     private string lastName = "";
-    private string username = "";
     private string email = "";
     private string password = "";
     private string conPassword = "";
@@ -82,7 +73,6 @@
     {
         Console.WriteLine("First name entered was " + firstName);
         Console.WriteLine("Last name entered was " + lastName);
-        Console.WriteLine("Username created " + username);
         Console.WriteLine("Email entered was " + email);
         Console.WriteLine("Password entered was " + password);
         Console.WriteLine("Confirm Password was " + conPassword);
@@ -104,19 +94,17 @@
             return;
         }
 
-        username = firstName + lastName;
         await Service.CreateUserAsync(new User
             {
                 FirstName = firstName,
                 LastName = lastName,
-                Username = username,
                 Email = email,
                 Password = password
             });
 
         // Navigate to the new profile page
         PrintInput();
-        UriHelper.NavigateTo($"/profile/{username}");
+        UriHelper.NavigateTo($"/profile/{email}");
     }
 
     /// <summary>

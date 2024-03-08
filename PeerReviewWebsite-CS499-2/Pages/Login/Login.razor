@@ -14,11 +14,11 @@
 
         <div>
             <!-- Add the Username & Password textfields and interative buttons-->
-            <input type="text" placeholder="Username" id="username" @bind-value=@username required><br><br>
+            <input type="email" placeholder="Email" id="email" @bind-value=@email required><br><br>
             <input type="password" placeholder="Password" id="password" @bind-value=@password required><br><br>
 
             <!--Error Message: only appears when the password input does not match-->
-            <label id="pswordlabel" for="password" hidden="@(!ShowMessage)">ERROR: Username or Password entered incorrectly</label>
+            <label id="pswordlabel" for="password" hidden="@(!ShowMessage)">ERROR: Email or Password entered incorrectly</label>
             <br />
             
 
@@ -31,7 +31,7 @@
 
 @code {
 
-    public string username = "";
+    public string email = "";
     private string password = "";
     bool ShowMessage { get; set; } = false; 
 
@@ -39,9 +39,9 @@
     /// Gets the user, if it exists, then logs them in
     /// </summary>
     private async Task LogInUser() {
-        User user = await Service.GetUserAsync(username);
+        User user = await Service.GetUserAsync(email);
         if (user is null || user.Password != password) {
-            Console.WriteLine($"Could not find user with the given username: {username} or password was incorrect");
+            Console.WriteLine($"Could not find user with the given email: {email} or password was incorrect");
             ShowMessage = true;
             return;
         }
@@ -49,7 +49,7 @@
         Console.WriteLine("Found user!");
         ShowMessage = false;
         PrintInput();
-        UriHelper.NavigateTo($"/profile/{username}");
+        UriHelper.NavigateTo($"/profile/{email}");
     }
 
     /// <summary>
@@ -57,7 +57,7 @@
     /// </summary>
     private void PrintInput()
     {
-        Console.WriteLine("Username entered was " + username);
+        Console.WriteLine("Email entered was " + email);
         Console.WriteLine("Password entered was " + password);
     }
 
