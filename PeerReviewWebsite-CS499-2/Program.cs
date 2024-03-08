@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PeerReviewWebsite.Classes.Data;
-using PeerReviewWebsite.Classes.Data.Login;
+using PeerReviewWebsite.Classes.Data.Account;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,7 +17,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<WebsiteDbContext>(options => options.UseSqlServer(connectionString));
 
 // Add services
-builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<AccountService>();
 
 var app = builder.Build();
 

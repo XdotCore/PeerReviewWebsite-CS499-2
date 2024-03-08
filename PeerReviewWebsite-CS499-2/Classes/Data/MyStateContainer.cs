@@ -1,5 +1,5 @@
 ﻿using System;
-using PeerReviewWebsite.Classes.Data.Login;
+using PeerReviewWebsite.Classes.Data.Account;
 
 // <summary>
 // Save the state of the User Class
