@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PeerReviewWebsite.Classes.Data.Account;
 using PeerReviewWebsite.Classes.Data.Review;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,7 +32,13 @@ namespace PeerReviewWebsite.Classes.Data {
 
         static string IdsToString(HashSet<int> ids) => string.Join(',', ids);
 
-        static HashSet<int> StringToIds(string str) => new(str.Split(',').Select(int.Parse));
+        static HashSet<int> StringToIds(string str) {
+            string[] isStrings = str.Split(',');
+            IEnumerable<int> ids = isStrings.Select(idString => int.TryParse(idString, out int id) ? (int?)id : null)
+                .Where(id => id is not null)
+                .Select(id => id.Value);
+            return new(ids);
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             ValueConverter<HashSet<int>, string> idsAsString = new(

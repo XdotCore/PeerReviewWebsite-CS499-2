@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,8 +22,15 @@ namespace PeerReviewWebsite.Classes.Data.Account {
         /// </summary>
         /// <param name="email">The username of the <see cref="User"/></param>
         /// <returns>The <see cref="User"/> with the given username, <see langword="null"/> if not found</returns>
-        public async Task<User> GetUserAsync(string email) =>
-            await context.Users.Where(user => user.Email == email).AsNoTracking().FirstOrDefaultAsync();
+        public async Task<User> GetUserAsync(string email) {
+            var a = context;
+            var b = a.Users;
+            Console.WriteLine(b.Count());
+            var c = b.Where(user => user.Email == email);
+            //var d = c.AsNoTracking();
+            var e = await c.FirstOrDefaultAsync();
+            return e;
+        }
 
         /// <summary>
         /// Adds the <see cref="User"/> account
