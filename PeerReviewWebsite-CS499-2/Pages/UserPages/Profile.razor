@@ -1,31 +1,20 @@
-﻿@page "/profile/{Email}"
+﻿@page "/profile"
+
 @using PeerReviewWebsite.Classes.Data.Login
+@inject MyStateContainer myStateContainer
 @inherits OwningComponentBase<UserService>
 
-<h1>Hello @Email</h1>
+<h1>Hello @user.FirstName @user.LastName!</h1>
 <h2> Profile Page </h2>
 
+<p>User Id: @user.Id</p>
+<p>Email: @user.Email </p>
+
 @code {
-    [Parameter]
-    public string Email { get; set; }
-
-    // <summary>
-    //  Finds the user and gathers their information from database (isn't called to do anything yet)
-    // </summary>
-    private async Task findUser()
+    private User user;
+    protected override void OnInitialized()
     {
-        // Find user information in the database
-        User user = await Service.GetUserAsync(Email);
-        if (user is null)
-        {
-            Console.WriteLine($"Could not find user with the given username: {Email}");
-            return;
-        }
-
-        // Checking that database info can be used
-        Console.WriteLine("User Info:");
-        Console.WriteLine("User ID: " + user.Id);
-        Console.WriteLine("Username: " + user.Email);
-        Console.WriteLine("User password" + user.Password);
+        base.OnInitialized();
+        user = myStateContainer.Value;
     }
 }

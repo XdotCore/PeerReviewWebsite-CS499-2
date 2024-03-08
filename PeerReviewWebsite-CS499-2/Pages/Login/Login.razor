@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using PeerReviewWebsite.Classes.Data.Login
+@inject MyStateContainer myStateContainer
 @inject NavigationManager UriHelper
 @inherits OwningComponentBase<UserService>
 
@@ -48,8 +49,9 @@
 
         Console.WriteLine("Found user!");
         ShowMessage = false;
+        myStateContainer.SetValue(user);
         PrintInput();
-        UriHelper.NavigateTo($"/profile/{email}");
+        UriHelper.NavigateTo($"/profile");
     }
 
     /// <summary>

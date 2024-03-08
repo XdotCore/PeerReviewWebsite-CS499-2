@@ -20,10 +20,21 @@ namespace PeerReviewWebsite.Classes.Data.Login {
         /// Adds the <see cref="User"/> account
         /// </summary>
         /// <param name="user">The object representation</param>
-        public Task CreateUserAsync(User user) {
+        public Task<User> CreateUserAsync(User user)
+        {
+            var profile = new TaskCompletionSource<User>();
             context.Users.Add(user);
             context.SaveChanges();
-            return Task.CompletedTask;
+            User addedUser = new User
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Password = user.Password
+            };
+            profile.SetResult(addedUser);
+            return profile.Task;
         }
     }
 }
