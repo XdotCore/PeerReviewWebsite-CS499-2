@@ -15,12 +15,13 @@
 
         <div>
             <!-- Add the Username & Password textfields and interative buttons-->
+            <label class="inputLabel" id="emailInputLabel">Email:</label><br />
             <input type="email" placeholder="Email" id="email" @bind-value=@email required><br><br>
+            <label class="inputLabel" id="passwordInputLabel">Password:</label><br />
             <input type="password" placeholder="Password" id="password" @bind-value=@password required><br><br>
 
             <!--Error Message: only appears when the password input does not match-->
-            <label id="pswordlabel" for="password" hidden="@(!ShowMessage)">ERROR: Email or Password entered incorrectly</label>
-            <br />
+            <label class="errorLabel" id="pswordlabel" hidden="@(!ShowMessage)">ERROR: Email or Password entered incorrectly</label><br />
             
 
             <!-- Don't use type="submit"! it breaks things!-->

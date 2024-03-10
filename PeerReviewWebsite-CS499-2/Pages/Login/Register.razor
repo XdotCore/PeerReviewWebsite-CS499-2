@@ -12,41 +12,53 @@
     <form action="">
         <div>
             <h2>Create a New Account</h2>
+
+            <!--Account Exists: only appears if an account using the given email already exists-->
+            <label class="errorLabel" hidden="@(!accountMessage)">An account for with email already exists</label>
+
+            <!--Missing Info Error Message: only appears when text fields have been left empty-->
+            <label class="errorLabel" hidden="@(!infoMessage)">Information Missing! Please make sure to provide all information</label><br /><br />
         </div>
 
         <div>
             <!-- First Name -->
-            <input type="text" placeholder="First Name" id="firstname" @bind-value=@firstName />
+            <label class="inputLabel" id="FirstNameLabel">First Name:</label><br />
+            <input type="text" placeholder="First Name" id="firstname" @bind-value=@firstName required/>
             <br />
             <br />
 
             <!-- Last Name -->
+            <label class="inputLabel" id="LastNameLabel">Last Name:</label>
             <input type="text" placeholder="Last Name" id="lastname" @bind-value=@lastName required />
             <br />
             <br />
 
             <!-- Email -->
+            <label class="inputLabel" id="EmailLabel">Email:</label>
             <input type="email" placeholder="Email" id="email" @bind-value=@email required />
             <br />
             <br />
 
             <!-- Password -->
-            <input type="password" placeholder="Password" id="password" @bind-value=@password pattern="[A-Za-z]{3}" required />
+            <label class="inputLabel" id="PasswordLabel">Password:</label>
+            <input type="password" placeholder="Password" id="password" @bind-value=@password required />
             <br />
             <br />
 
             <!-- Confirm Password -->
+            <label class="inputLabel" id="ConPasswordLabel">Confirm Password:</label>
             <input type="password" placeholder="Confirm Password" id="conpassword" @bind-value=@conPassword required />
             <br />
             <br />
 
             <!--Password Error Message: only appears when the password input does not match-->
-            <label id="pswordlabel" for="password" hidden="@(!pswrdMessage)">ERROR: Passwords didn't match</label>
+            <label class="errorLabel" id="pswordlabel" for="password" hidden="@(!pswrdMessage)">ERROR: Passwords didn't match</label>
             <br />
 
-            <!--Email Error Message: only appears when email input does not have a valid format-->
-            <label id="emaillabel" for="email" hidden="@(!emailMessage)">ERROR: Invalid Email</label>
-            <br />
+            <!--Email Error Message: only appears when email input d
+
+            oes not have a valid format-->
+            <label class="errorLabel" id="emaillabel" for="email" hidden="@(!emailMessage)">ERROR: Invalid Email</label>
             <br />
 
             <button type="button" class="btn btn-primary" @onclick="RegisterUser">Create Account</button>
@@ -66,6 +78,8 @@
     private string conPassword = "";
     bool pswrdMessage { get; set; } = false;
     bool emailMessage { get; set; } = false;
+    bool infoMessage { get; set; } = false;
+    bool accountMessage { get; set; } = false;
 
     /// <summary>
     /// Checking that input is being properly grabbed
@@ -84,9 +98,16 @@
     /// </summary>
     private async Task RegisterUser()
     {
+        // Validate the given input
         pswrdMessage = false;
         emailMessage = false;
-        if (!ConfirmPassword())
+        infoMessage = false;
+        accountMessage = false;
+        if (!FilledInput())
+        {
+            infoMessage = true;
+            return;
+        } else if (!ConfirmPassword())
         {
             pswrdMessage = true;
             return;
@@ -97,7 +118,16 @@
             return;
         }
 
-        User user = await Service.CreateUserAsync(new User
+        // Check that the user is not already in the system by email
+        User user = await Service.GetUserAsync(email);
+        if (user is not null)
+        {
+            accountMessage = true;
+            return;
+        }
+
+        // Save the new user's information to the database
+        user = await Service.CreateUserAsync(new User
             {
                 FirstName = firstName,
                 LastName = lastName,
@@ -141,6 +171,7 @@
     /// <summary>
     ///  Check that email input has valid email format
     /// </summary>
+    /// <returns>True if it has valid format, false otherwise</returns>
     private bool ValidateEmail()
     {
         string emailFormat = @"^([a-zA-Z])+[^@\s]+@([a-zA-Z])+\.[^@\s]+$";
@@ -156,4 +187,16 @@
         }
     }
 
+    /// <summary>
+    /// Check that all information was filled
+    /// <summary>
+    /// <returns>False if input has not been given, true otherwise</returns>
+    private bool FilledInput()
+    {
+        if (firstName == "" || lastName == "" || email == "" || password == "")
+        {
+            return false;
+        }
+        return true;
+    }
 }
