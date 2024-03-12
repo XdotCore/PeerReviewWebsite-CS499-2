@@ -1,4 +1,4 @@
-﻿@page "/profile"
+﻿@page "/explore"
 
 @using PeerReviewWebsite.Classes.Data.Account
 @inject MyStateContainer myStateContainer
@@ -8,24 +8,18 @@
 
     <ul>
         <li><a href="@("/home")">Home</a></li>
-        <li><a href="@("/explore")">Explore</a></li>
+        <li><a class="active"  href="@("/explore")">Explore</a></li>
         <li><a href=@("/moderator")>Moderator</a></li>
-        <li><a class="active"  href=@("/profile")>Profile</a></li>
+        <li><a href=@("/profile")>Profile</a></li>
     </ul>
 
-    <h1>Hello @user.FirstName @user.LastName!</h1>
-    <h2> Profile Page </h2>
-
-    <p>User Id: @user.Id</p>
-    <p>Email: @user.Email </p>
+    <h1> Explore Page </h1>
 
 </body>
 
 <footer>
     <p style="color:white">Here's where we can cite people</p>
 </footer>
-
-
 
 @code {
     private User user;
