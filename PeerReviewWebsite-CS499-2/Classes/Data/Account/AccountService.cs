@@ -22,15 +22,8 @@ namespace PeerReviewWebsite.Classes.Data.Account {
         /// </summary>
         /// <param name="email">The username of the <see cref="User"/></param>
         /// <returns>The <see cref="User"/> with the given username, <see langword="null"/> if not found</returns>
-        public async Task<User> GetUserAsync(string email) {
-            var a = context;
-            var b = a.Users;
-            Console.WriteLine(b.Count());
-            var c = b.Where(user => user.Email == email);
-            //var d = c.AsNoTracking();
-            var e = await c.FirstOrDefaultAsync();
-            return e;
-        }
+        public async Task<User> GetUserAsync(string email) =>
+            await context.Users.Where(user => user.Email == email).AsNoTracking().FirstOrDefaultAsync();
 
         /// <summary>
         /// Adds the <see cref="User"/> account
@@ -68,8 +61,16 @@ namespace PeerReviewWebsite.Classes.Data.Account {
         /// </summary>
         /// <param name="id">The id of the <see cref="Role"/></param>
         /// <returns>The <see cref="Role"/> with the given id, <see langword="null"/> if not found</returns>
-        public async Task<Role> GetRole(int id) =>
+        public async Task<Role> GetRoleAsync(int id) =>
             await context.Roles.Where(role => role.Id == id).AsNoTracking().FirstOrDefaultAsync();
+
+        /// <summary>
+        /// Gets the <see cref="Role"/> with the given name
+        /// </summary>
+        /// <param name="name">The namde of the <see cref="Role"/></param>
+        /// <returns>The <see cref="Role"/> with the given name, <see langword="null"/> if not found</returns>
+        public async Task<Role> GetRoleAsync(string name) =>
+            await context.Roles.Where(role => role.Name == name).AsNoTracking().FirstOrDefaultAsync();
 
         /// <summary>
         /// Adds the <see cref="Role"/>
@@ -82,6 +83,59 @@ namespace PeerReviewWebsite.Classes.Data.Account {
             Role addedRole = new(role);
             result.SetResult(addedRole);
             return result.Task;
+        }
+
+        /// <summary>
+        /// Gets the combined <see cref="Permission"/>s that the <see cref="User"/> has
+        /// </summary>
+        /// <param name="user">The <see cref="User"/> to get the <see cref="Permission"/>s from</param>
+        /// <returns>The combined <see cref="Permission"/>s of the <see cref="User"/></returns>
+        public async Task<Permission> GetUserPermissions(User user) {
+            Permission result = Permission.None;
+
+            foreach (int roleId in user.Roles) {
+                Role role = await GetRoleAsync(roleId);
+                result |= role.Permissions;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets if the <see cref="User"/> has all of the given <see cref="Permission"/>s
+        /// </summary>
+        /// <param name="user">The <see cref="User"/> to check against</param>
+        /// <param name="permissions">The <see cref="Permission"/>s to check against</param>
+        /// <returns><see langword="true"/> if the <see cref="User"/> has every given <see cref="Permission"/>, <see langword="false"/> otherwise</returns>
+        public async Task<bool> UserHasPermissions(User user, Permission permissions) {
+            Permission userPerms = await GetUserPermissions(user);
+
+            return (userPerms & permissions) == permissions;
+        }
+
+        /// <summary>
+        /// Gets if the <see cref="User"/> has any of the given <see cref="Permission"/>s
+        /// </summary>
+        /// <param name="user">The <see cref="User"/> to check against</param>
+        /// <param name="permissions">The <see cref="Permission"/>s to check against</param>
+        /// <returns><see langword="true"/> if the <see cref="User"/> has any given <see cref="Permission"/>, <see langword="false"/> otherwise</returns>
+        public async Task<bool> UserHasAnyPermissions(User user, Permission permissions) {
+            Permission userPerms = await GetUserPermissions(user);
+
+            return (userPerms & permissions) != Permission.None;
+        }
+
+        /// <summary>
+        /// Gets if the <see cref="User"/> has any <see cref="Permission"/> that would give them access to the moderator tab
+        /// </summary>
+        /// <param name="user">The given <see cref="User"/> to check against</param>
+        /// <returns><see langword="true"/> if the <see cref="User"/> has any of the right <see cref="Permission"/>s, <see langword="false"/> otherwise</returns>
+        public async Task<bool> UserIsModerator(User user) {
+            return await UserHasAnyPermissions(user, Permission.ApproveDocument |
+                                                     Permission.ApproveComment | 
+                                                     Permission.SelectReviewer | 
+                                                     Permission.EditPermissions | 
+                                                     Permission.EditRoles);
         }
     }
 }

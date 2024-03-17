@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PeerReviewWebsite.Classes.Data.Account;
 using PeerReviewWebsite.Classes.Data.Review;
@@ -45,6 +46,8 @@ namespace PeerReviewWebsite.Classes.Data {
                 ids => IdsToString(ids),
                 str => StringToIds(str));
 
+            ValueComparer<HashSet<int>> idsComparer = new(true);
+
             // Add the Users table
             modelBuilder.Entity<User>(entity => {
                 entity.ToTable("Users");
@@ -53,9 +56,9 @@ namespace PeerReviewWebsite.Classes.Data {
                 entity.Property(user => user.LastName);
                 entity.Property(user => user.Email);
                 entity.Property(user => user.Password);
-                entity.Property(user => user.Roles).HasConversion(idsAsString);
-                entity.Property(user => user.OwnedDocuments).HasConversion(idsAsString);
-                entity.Property(user => user.OwnedComments).HasConversion(idsAsString);
+                entity.Property(user => user.Roles).HasConversion(idsAsString, idsComparer);
+                entity.Property(user => user.OwnedDocuments).HasConversion(idsAsString, idsComparer);
+                entity.Property(user => user.OwnedComments).HasConversion(idsAsString, idsComparer);
             });
 
             // Add the Roles table

@@ -8,7 +8,7 @@
 
 <body>
     <h1> Welcome to Online Peer Review! </h1>
-    <form action="">
+    <form @onsubmit=LogInUser>
         <div>
             <h1> Login </h1>
         </div>
@@ -16,7 +16,7 @@
         <div>
             <!-- Add the Username & Password textfields and interative buttons-->
             <label class="inputLabel" id="emailInputLabel">Email:</label><br />
-            <input type="email" placeholder="Email" id="email" @bind-value=@email required><br><br>
+            <input type="text" placeholder="Email" id="email" @bind-value=@email required><br><br>
             <label class="inputLabel" id="passwordInputLabel">Password:</label><br />
             <input type="password" placeholder="Password" id="password" @bind-value=@password required><br><br>
 
@@ -24,8 +24,7 @@
             <label class="errorLabel" id="pswordlabel" hidden="@(!ShowMessage)">ERROR: Email or Password entered incorrectly</label><br />
             
 
-            <!-- Don't use type="submit"! it breaks things!-->
-            <button type="button" class="btn btn-primary" @onclick="LogInUser">Login</button><br>
+            <button type="submit" class="btn btn-primary">Login</button><br>
             <p>Don't have an account?  <NavLink class="nav-link" href="register">Register</NavLink></p>
         </div>
     </form>

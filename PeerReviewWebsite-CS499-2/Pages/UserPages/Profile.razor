@@ -6,12 +6,7 @@
 
 <body>
 
-    <ul>
-        <li><a href="@("/home")">Home</a></li>
-        <li><a href="@("/explore")">Explore</a></li>
-        <li><a href=@("/moderator")>Moderator</a></li>
-        <li><a class="active"  href=@("/profile")>Profile</a></li>
-    </ul>
+    <NavigationBar activePage=NavigationBar.Page.Profile showModeratorPage=isModerator/>
 
     <h1>Hello @user.FirstName @user.LastName!</h1>
     <h2> Profile Page </h2>
@@ -21,17 +16,14 @@
 
 </body>
 
-<footer>
-    <p style="color:white">Here's where we can cite people</p>
-</footer>
-
-
+<Footer />
 
 @code {
     private User user;
-    protected override void OnInitialized()
+    private bool isModerator;
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
         user = myStateContainer.Value;
+        isModerator = await Service.UserIsModerator(user);
     }
 }

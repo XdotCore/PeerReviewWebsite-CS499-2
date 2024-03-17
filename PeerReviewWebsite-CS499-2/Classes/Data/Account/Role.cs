@@ -22,19 +22,20 @@ namespace PeerReviewWebsite.Classes.Data.Account {
     }
 
     [Flags]
-    public enum Permission {
+    public enum Permission : uint {
         None            = 0,
-        All             = int.MaxValue & ~ReadOnly,
+        All             = ~None & ~ReadOnly,
         ReadOnly        = 1 << 0,
         UploadDocument  = 1 << 1,
         UpdateDocument  = 1 << 2,
         ApproveDocument = 1 << 3,
         CloseDocument   = 1 << 4,
-        SelectReviewer  = 1 << 5,
-        Comment         = 1 << 6,
-        Respond         = 1 << 7,
-        ResolveComment  = 1 << 8,
-        EditPermissions = 1 << 9,
-        EditRoles       = 1 << 10,
+        ApproveComment  = 1 << 5,
+        SelectReviewer  = 1 << 6,
+        Comment         = 1 << 7,
+        Respond         = 1 << 8,
+        ResolveComment  = 1 << 9,
+        EditPermissions = 1 << 10,
+        EditRoles       = 1 << 11,
     }
 }
