@@ -61,7 +61,7 @@ if (await accountService.GetUserAsync(adminEmail) is null) {
     User adminAccount = await accountService.CreateUserAsync(new User {
         FirstName = "Admin",
         LastName = "User",
-        Email = "admin",
+        Email = adminEmail,
         Password = "admin123"
     });
 }
