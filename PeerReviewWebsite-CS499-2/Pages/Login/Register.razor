@@ -9,7 +9,7 @@
 
 <body>
     <h1>Registration Form</h1>
-    <form action="">
+    <form @onsubmit=RegisterUser>
         <div>
             <h2>Create a New Account</h2>
 
@@ -61,7 +61,7 @@
             <label class="errorLabel" id="emaillabel" for="email" hidden="@(!emailMessage)">ERROR: Invalid Email</label>
             <br />
 
-            <button type="button" class="btn btn-primary" @onclick="RegisterUser">Create Account</button>
+            <button type="submit" class="btn btn-primary">Create Account</button>
             <br />
             <p>Already have an account?  <NavLink class="nav-link" href="/">Login</NavLink></p>
         </div>
@@ -191,12 +191,7 @@
     /// Check that all information was filled
     /// <summary>
     /// <returns>False if input has not been given, true otherwise</returns>
-    private bool FilledInput()
-    {
-        if (firstName == "" || lastName == "" || email == "" || password == "")
-        {
-            return false;
-        }
-        return true;
-    }
+
+    private bool FilledInput() =>
+        firstName != "" && lastName != "" && email != "" && password != "";
 }
