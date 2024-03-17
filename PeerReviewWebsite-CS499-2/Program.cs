@@ -44,19 +44,26 @@ dbContext.Database.EnsureDeleted();
 #endif
 dbContext.Database.EnsureCreated();
 
-// Add admin role
 AccountService accountService = new(dbContext);
-Role adminRole = await accountService.CreateRoleAsync(new Role {
-    Name = "Administrator",
-    Permissions = Permission.All
-});
+
+// Add admin role
+string adminRoleName = "Administrator";
+if (await accountService.GetRoleAsync(adminRoleName) is null) {
+    Role adminRole = await accountService.CreateRoleAsync(new Role {
+        Name = adminRoleName,
+        Permissions = Permission.All
+    });
+}
 
 // Add admin account
-User adminAccount = await accountService.CreateUserAsync(new User {
-    FirstName = "Admin",
-    LastName = "User",
-    Email = "admin",
-    Password = "admin123"
-});
+string adminEmail = "admin";
+if (await accountService.GetUserAsync(adminEmail) is null) {
+    User adminAccount = await accountService.CreateUserAsync(new User {
+        FirstName = "Admin",
+        LastName = "User",
+        Email = "admin",
+        Password = "admin123"
+    });
+}
 
 app.Run();

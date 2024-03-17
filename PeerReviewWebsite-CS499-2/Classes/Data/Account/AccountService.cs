@@ -68,8 +68,16 @@ namespace PeerReviewWebsite.Classes.Data.Account {
         /// </summary>
         /// <param name="id">The id of the <see cref="Role"/></param>
         /// <returns>The <see cref="Role"/> with the given id, <see langword="null"/> if not found</returns>
-        public async Task<Role> GetRole(int id) =>
+        public async Task<Role> GetRoleAsync(int id) =>
             await context.Roles.Where(role => role.Id == id).AsNoTracking().FirstOrDefaultAsync();
+
+        /// <summary>
+        /// Gets the <see cref="Role"/> with the given name
+        /// </summary>
+        /// <param name="name">The namde of the <see cref="Role"/></param>
+        /// <returns>The <see cref="Role"/> with the given name, <see langword="null"/> if not found</returns>
+        public async Task<Role> GetRoleAsync(string name) =>
+            await context.Roles.Where(role => role.Name == name).AsNoTracking().FirstOrDefaultAsync();
 
         /// <summary>
         /// Adds the <see cref="Role"/>
