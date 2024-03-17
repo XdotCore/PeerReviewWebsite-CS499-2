@@ -13,7 +13,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="Pages\UserPages\Author.razor.css" />
 	  <None Remove="Pages\UserPages\Explore.razor.css" />
 	  <None Remove="Pages\UserPages\Home.razor.css" />
 	  <None Remove="Pages\UserPages\Moderator.razor.css" />
@@ -21,7 +20,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Include="Pages\UserPages\Author.razor.css" />
 	  <Content Include="Pages\UserPages\Explore.razor.css" />
 	  <Content Include="Pages\UserPages\Home.razor.css" />
 	  <Content Include="Pages\UserPages\Moderator.razor.css" />
