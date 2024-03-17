@@ -6,12 +6,7 @@
 
 <body>
 
-    <ul>
-        <li><a href="@("/home")">Home</a></li>
-        <li><a href="@("/explore")">Explore</a></li>
-        <li><a class="active" href=@("/moderator")>Moderator</a></li>
-        <li><a href=@("/profile")>Profile</a></li>
-    </ul>
+    <NavigationBar activePage=NavigationBar.Page.Moderator showModeratorPage=true />
 
     <h1> Moderator Page </h1>
 
@@ -24,7 +19,6 @@
     private User user;
     protected override void OnInitialized()
     {
-        base.OnInitialized();
         user = myStateContainer.Value;
     }
 }
