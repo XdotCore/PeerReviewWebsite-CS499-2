@@ -1,4 +1,4 @@
-﻿@page "/home"
+﻿@page "/reviewer"
 
 @using PeerReviewWebsite.Classes.Data.Account
 @inject MyStateContainer myStateContainer
@@ -9,28 +9,18 @@
     <ul>
         <li><a class="active" href="@("/home")">Home</a></li>
         <li><a href="@("/explore")">Explore</a></li>
+        <li><a class="active" href=@("/reviewer")>Reviewer</a></li>
         <li><a href=@("/profile")>Profile</a></li>
         <li><a href=@("/")>Sign Out</a></li>
+
     </ul>
 
-    <h1> Home Page </h1>
+    <h1> Reviewer Page </h1>
 
-    <p>Here's where can put announcements and updates</p>
-
-    <div class="dropdown">
-        <button class="dropbtn">I am a...</button>
-        <div class="dropdown-content">
-            <a href=@("/author")>Author</a>
-            <a href=@("/reviewer")>Reviewer</a>
-            <a href=@("/moderator")>Moderator</a>
-        </div>
-    </div>
+    <p> Only those with Reviewer role status will be able access to this page </p>
+    <p>Will include a list of documents assigned for review</p>
 
 </body>
-
-<footer>
-    <p style="color:white">Here's where we can cite people</p>
-</footer>
 
 @code {
     private User user;
@@ -40,3 +30,4 @@
         user = myStateContainer.Value;
     }
 }
+
