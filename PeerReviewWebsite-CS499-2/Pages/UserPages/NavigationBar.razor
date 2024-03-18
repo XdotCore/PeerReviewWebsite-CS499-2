@@ -1,13 +1,13 @@
 ﻿<ul>
-    <li><a class=@HomeClass href="/home">Home</a></li>
-    <li><a class=@ExploreClass href="/explore">Explore</a></li>
-    <li><a class=@AuthorClass href="/author">Author</a></li>
-    <li><a class=@ReviewerClass href="/reviewer">Reviewer</a></li>
+    <li class="left"><a class=@GetClass(Page.Home) href="/home">Home</a></li>
+    <li class="left"><a class=@GetClass(Page.Explore) href="/explore">Explore</a></li>
+    <li class="left"><a class=@GetClass(Page.Author) href="/author">Author</a></li>
+    <li class="left"><a class=@GetClass(Page.Reviewer) href="/reviewer">Reviewer</a></li>
+    <li class="left"><a class=@GetClass(Page.Profile) href="/profile">Profile</a></li>
+    <li class="right"><a class=@GetClass(Page.LogOut) href="/">Log Out</a></li>
     @if (showModeratorPage) {
-        <li><a class=@ModeratorClass href="/moderator">Moderator</a></li>
+        <li class="right"><a class=@GetClass(Page.Moderator) href="/moderator">Moderator</a></li>
     }
-    <li><a class=@ProfileClass href="/profile">Profile</a></li>
-    <li><a class=@LogOutClass href="/">Log Out</a></li>
 </ul>
 
 @code {
@@ -23,13 +23,6 @@
 
     [Parameter]
     public Page activePage { get; set; }
-    private string HomeClass => activePage == Page.Home ? "active" : "";
-    private string ExploreClass => activePage == Page.Explore ? "active" : "";
-    private string AuthorClass => activePage == Page.Author ? "active" : "";
-    private string ReviewerClass => activePage == Page.Reviewer ? "active" : "";
-    private string ModeratorClass => activePage == Page.Moderator ? "active" : "";
-    private string ProfileClass => activePage == Page.Profile ? "active" : "";
-    private string LogOutClass => activePage == Page.LogOut ? "active" : "";
 
     [Parameter]
     public bool showModeratorPage { get; set; }
@@ -37,6 +30,8 @@
     public bool showReviewerPage { get; set; }
 
     protected override async Task OnInitializedAsync() {
-        
+
     }
+
+    private string GetClass(Page page) => activePage == page ? "active" : "";
 }
