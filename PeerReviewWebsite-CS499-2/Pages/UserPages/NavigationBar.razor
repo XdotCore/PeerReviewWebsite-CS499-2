@@ -1,29 +1,40 @@
 ﻿<ul>
     <li><a class=@HomeClass href="/home">Home</a></li>
     <li><a class=@ExploreClass href="/explore">Explore</a></li>
+    <li><a class=@AuthorClass href="/author">Author</a></li>
+    <li><a class=@ReviewerClass href="/reviewer">Reviewer</a></li>
     @if (showModeratorPage) {
         <li><a class=@ModeratorClass href="/moderator">Moderator</a></li>
     }
     <li><a class=@ProfileClass href="/profile">Profile</a></li>
+    <li><a class=@LogOutClass href="/">Log Out</a></li>
 </ul>
 
 @code {
     public enum Page {
         Home,
         Explore,
+        Author,
+        Reviewer,
         Moderator,
-        Profile
+        Profile,
+        LogOut
     }
 
     [Parameter]
     public Page activePage { get; set; }
     private string HomeClass => activePage == Page.Home ? "active" : "";
     private string ExploreClass => activePage == Page.Explore ? "active" : "";
+    private string AuthorClass => activePage == Page.Author ? "active" : "";
+    private string ReviewerClass => activePage == Page.Reviewer ? "active" : "";
     private string ModeratorClass => activePage == Page.Moderator ? "active" : "";
     private string ProfileClass => activePage == Page.Profile ? "active" : "";
+    private string LogOutClass => activePage == Page.LogOut ? "active" : "";
 
     [Parameter]
     public bool showModeratorPage { get; set; }
+    public bool showAuthorPage { get; set; }
+    public bool showReviewerPage { get; set; }
 
     protected override async Task OnInitializedAsync() {
         

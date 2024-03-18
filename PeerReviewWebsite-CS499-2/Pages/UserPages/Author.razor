@@ -1,0 +1,31 @@
+﻿@page "/author"
+
+@using PeerReviewWebsite.Classes.Data.Account
+@inject MyStateContainer myStateContainer
+@inherits OwningComponentBase<AccountService>
+
+<body>
+    <NavigationBar activePage=NavigationBar.Page.Author showModeratorPage=isModerator />
+    <h1>Author Page</h1>
+
+    <p> Upload New File </p>
+    <button type="button" class="btn btn-primary">Choose File</button><br /><br />
+
+    <p> Reupload File </p>
+    <button type="button" class="btn btn-primary">Choose File</button><br /><br />
+
+    <p> Uploaded Files</p>
+
+</body>
+
+<Footer />
+
+@code {
+    private User user;
+    private bool isModerator;
+    protected override async Task OnInitializedAsync()
+    {
+        user = myStateContainer.Value;
+        isModerator = await Service.UserIsModerator(user);
+    }
+}
