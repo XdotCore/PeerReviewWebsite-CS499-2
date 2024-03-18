@@ -1,12 +1,12 @@
 ﻿<ul>
-    <li class="left"><a class=@GetClass(Page.Home) href="/home">Home</a></li>
-    <li class="left"><a class=@GetClass(Page.Explore) href="/explore">Explore</a></li>
-    <li class="left"><a class=@GetClass(Page.Author) href="/author">Author</a></li>
-    <li class="left"><a class=@GetClass(Page.Reviewer) href="/reviewer">Reviewer</a></li>
-    <li class="left"><a class=@GetClass(Page.Profile) href="/profile">Profile</a></li>
-    <li class="right"><a class=@GetClass(Page.LogOut) href="/">Log Out</a></li>
+    <li class="left"><a class=@GetClass(Page.Home) href="/home"<i class="bi-house-fill"></i> Home</a></li>
+    <li class="left"><a class=@GetClass(Page.Explore) href="/explore"<i class="bi-search"></i> Explore</a></li>
+    <li class="left"><a class=@GetClass(Page.Author) href="/author"<i class="bi-pencil-fill"></i> Author</a></li>
+    <li class="left"><a class=@GetClass(Page.Reviewer) href="/reviewer"<i class="bi-patch-check-fill"></i> Reviewer</a></li>
+    <li class="left"><a class=@GetClass(Page.Profile) href="/profile"<i class="bi-person-circle"></i> Profile</a></li>
+    <li class="right"><a class=@GetClass(Page.LogOut) href="/"<i class="bi-box-arrow-right"></i> Log Out</a></li>
     @if (showModeratorPage) {
-        <li class="right"><a class=@GetClass(Page.Moderator) href="/moderator">Moderator</a></li>
+        <li class="right"><a class=@GetClass(Page.Moderator) href="/moderator"<i class="bi-chat-right-text-fill"></i> Moderator</a></li>
     }
 </ul>
 
