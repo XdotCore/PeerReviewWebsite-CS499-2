@@ -75,6 +75,10 @@ namespace PeerReviewWebsite.Classes.Data {
                 entity.HasKey(doc => doc.Id);
                 entity.Property(doc => doc.Status);
                 entity.Property(doc => doc.FileName);
+                entity.Property(doc => doc.Content);
+                entity.Property(doc => doc.Author);
+                entity.Property(doc => doc.Title);
+                entity.Property(doc => doc.Description);
             });
 
             // Add the Comments table

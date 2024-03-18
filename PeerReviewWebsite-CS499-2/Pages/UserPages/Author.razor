@@ -1,33 +1,86 @@
 ﻿@page "/author"
 
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.Extensions.DependencyInjection
 @using PeerReviewWebsite.Classes.Data.Account
+@using PeerReviewWebsite.Classes.Data.Review
+@using System.IO
 @inject MyStateContainer myStateContainer
-@inherits OwningComponentBase<AccountService>
+@inherits OwningComponentBase
 
 <PageTitle>Author</PageTitle>
 
 <body>
     <NavigationBar activePage=NavigationBar.Page.Author showModeratorPage=isModerator />
-    <h1>Author Page</h1>
+    <h1>Upload Document</h1>
 
-    <p> Upload New File </p>
-    <button type="button" class="btn btn-primary">Choose File</button><br /><br />
+    <form @onsubmit=UploadDocument>
 
-    <p> Reupload File </p>
-    <button type="button" class="btn btn-primary">Choose File</button><br /><br />
+        <p>Title:</p>
+        <input type="text" placeholder="Title" @bind-value=title />
 
-    <p> Uploaded Files</p>
+        <p>Description:</p>
+        <textarea placeholder="Description" rows="5" cols="80" @bind=description />
+
+        <p>File:</p>
+        <InputFile accept=".txt, .pdf" OnChange=FileChanged />
+
+        <br /><br /><br />
+        <button class="submit" type="submit">Submit Document</button>
+
+    </form>
 
 </body>
 
 <Footer />
 
 @code {
+    private AccountService AccountService { get; set; }
+    private ReviewService ReviewService { get; set; }
+
+    private List<string> validExtensions = new() { ".txt", ".pdf" };
+
+    private string title = null;
+    private string description = null;
+    private IBrowserFile file = null;
+
     private User user;
     private bool isModerator;
     protected override async Task OnInitializedAsync()
     {
+        AccountService = ScopedServices.GetRequiredService<AccountService>();
+        ReviewService = ScopedServices.GetRequiredService<ReviewService>();
+
         user = myStateContainer.Value;
-        isModerator = await Service.UserIsModerator(user);
+        isModerator = await AccountService.UserIsModerator(user);
+    }
+
+    private async Task UploadDocument() {
+        if (!ValidateUploadInput())
+            return;
+
+        using Stream stream = file.OpenReadStream();
+        byte[] bytes = new byte[stream.Length];
+        await stream.ReadAsync(bytes, 0, bytes.Length);
+        string base64 = Convert.ToBase64String(bytes);
+
+        Document newDoc = await ReviewService.CreateDocumentAsync(new() {
+            FileName = file.Name,
+            Content = base64,
+            Title = title,
+            Description = description
+        });
+
+        await AccountService.AddDocumentToUserAsync(user, newDoc);
+    }
+
+    private bool ValidateUploadInput() => !string.IsNullOrEmpty(title) &&
+                                          !string.IsNullOrEmpty(description) && 
+                                          !string.IsNullOrEmpty(file?.Name) &&
+                                          validExtensions.Contains(Path.GetExtension(file.Name));
+
+    private void FileChanged(InputFileChangeEventArgs e) {
+        if (e.FileCount == 1)
+            file = e.File;
     }
 }

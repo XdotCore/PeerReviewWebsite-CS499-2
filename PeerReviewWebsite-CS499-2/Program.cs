@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PeerReviewWebsite.Classes.Data;
 using PeerReviewWebsite.Classes.Data.Account;
+using PeerReviewWebsite.Classes.Data.Review;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,7 @@ builder.Services.AddDbContext<WebsiteDbContext>(options => options.UseSqlServer(
 
 // Add services
 builder.Services.AddScoped<AccountService>();
+builder.Services.AddScoped<ReviewService>();
 
 var app = builder.Build();
 
