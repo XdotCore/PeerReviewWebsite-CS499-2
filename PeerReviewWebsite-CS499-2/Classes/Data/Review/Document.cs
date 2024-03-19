@@ -4,7 +4,7 @@
         public int Id { get; set; }
         public DocumentStatus Status { get; set; } = DocumentStatus.Uploaded;
         public string FileName { get; set; }
-        public string Content { get; set; }
+        public byte[] Content { get; set; }
         public int Author { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }

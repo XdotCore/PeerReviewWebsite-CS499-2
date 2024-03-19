@@ -5,36 +5,53 @@
 @using PeerReviewWebsite.Classes.Data.Account
 @using PeerReviewWebsite.Classes.Data.Review
 @using System.IO
-@inject MyStateContainer myStateContainer
+@using System.Diagnostics
+@inject MyStateContainer state
 @inherits OwningComponentBase
 
 <PageTitle>Author</PageTitle>
 
 <body>
     <NavigationBar activePage=NavigationBar.Page.Author showModeratorPage=isModerator />
-    <h1>Upload Document</h1>
+    <button disabled=@(tab == Tab.Upload) @onclick=@(() => tab = Tab.Upload)>Upload</button>
+    <button disabled=@(tab == Tab.Browse) @onclick=@(() => tab = Tab.Browse)>Browse</button>
 
-    <form @onsubmit=UploadDocument>
+    @if (tab == Tab.Upload) {
+        <form @onsubmit=UploadDocument>
 
-        <p>Title:</p>
-        <input type="text" placeholder="Title" @bind-value=title />
+            <p>Title:</p>
+            <input type="text" placeholder="Title" @bind-value=title />
 
-        <p>Description:</p>
-        <textarea placeholder="Description" rows="5" cols="80" @bind=description />
+            <p>Description:</p>
+            <textarea placeholder="Description" rows="5" cols="80" @bind=description />
 
-        <p>File:</p>
-        <InputFile accept=".txt, .pdf" OnChange=FileChanged />
+            <p>File:</p>
+            <InputFile accept=".txt, .pdf" OnChange=FileChanged />
 
-        <br /><br /><br />
-        <button class="submit" type="submit">Submit Document</button>
+            <br /><br /><br />
+            <button class="submit" type="submit">Submit Document</button>
 
-    </form>
+        </form>
+    }
+    else if (tab == Tab.Browse) {
+        <ul>
+            @foreach(Document doc in docs) {
+                <li><a href="/download/id=@doc.Id" target="_blank">@doc.FileName</a></li>
+            }
+        </ul>
+    }
 
 </body>
 
 <Footer />
 
 @code {
+    private enum Tab {
+        Upload,
+        Browse
+    }
+    private Tab tab;
+
     private AccountService AccountService { get; set; }
     private ReviewService ReviewService { get; set; }
 
@@ -44,34 +61,38 @@
     private string description = null;
     private IBrowserFile file = null;
 
-    private User user;
+    private List<Document> docs = new();
+
     private bool isModerator;
     protected override async Task OnInitializedAsync()
     {
         AccountService = ScopedServices.GetRequiredService<AccountService>();
         ReviewService = ScopedServices.GetRequiredService<ReviewService>();
 
-        user = myStateContainer.Value;
-        isModerator = await AccountService.UserIsModerator(user);
+        isModerator = await AccountService.UserIsModerator(state.User);
+
+        await PopulateDocs();
     }
 
     private async Task UploadDocument() {
         if (!ValidateUploadInput())
             return;
 
-        using Stream stream = file.OpenReadStream();
-        byte[] bytes = new byte[stream.Length];
-        await stream.ReadAsync(bytes, 0, bytes.Length);
-        string base64 = Convert.ToBase64String(bytes);
+        using Stream stream = file.OpenReadStream(int.MaxValue);
+        using MemoryStream memory = new();
+        await stream.CopyToAsync(memory);
+        byte[] bytes = memory.ToArray();
 
         Document newDoc = await ReviewService.CreateDocumentAsync(new() {
             FileName = file.Name,
-            Content = base64,
+            Content = bytes,
             Title = title,
             Description = description
         });
 
-        await AccountService.AddDocumentToUserAsync(user, newDoc);
+        state.UpdateUser(await AccountService.AddDocumentToUserAsync(state.User, newDoc));
+
+        await PopulateDocs();
     }
 
     private bool ValidateUploadInput() => !string.IsNullOrEmpty(title) &&
@@ -83,4 +104,11 @@
         if (e.FileCount == 1)
             file = e.File;
     }
+
+    private async Task PopulateDocs() {
+        docs.Clear();
+        foreach (int id in state.User.OwnedDocuments)
+            docs.Add(await ReviewService.GetDocumentAsync(id));
+    }
+
 }

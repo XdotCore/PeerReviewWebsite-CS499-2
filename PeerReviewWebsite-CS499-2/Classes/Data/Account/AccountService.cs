@@ -149,21 +149,21 @@ namespace PeerReviewWebsite.Classes.Data.Account {
         /// <param name="user">The <see cref="User"/> to add the <see cref="Document"/> to</param>
         /// <param name="doc">The <see cref="Document"/> to add to the <see cref="User"/></param>
         /// <returns><see langword="true"/> if the document was successfully added to the user, <see langword="false"/> otherwise</returns>
-        public async Task<bool> AddDocumentToUserAsync(User user, Document doc) {
+        public async Task<User> AddDocumentToUserAsync(User user, Document doc) {
             User dbUser = await context.Users.Where(u => u.Id == user.Id).FirstOrDefaultAsync();
             if (dbUser is null)
-                return false;
+                return user;
 
             Document dbDoc = await context.Documents.Where(d => d.Id == doc.Id).FirstOrDefaultAsync();
             if (dbDoc is null)
-                return false;
+                return user;
 
             dbUser.OwnedDocuments.Add(dbDoc.Id);
             context.Users.Update(dbUser);
             dbDoc.Author = dbUser.Id;
             context.Documents.Update(dbDoc);
             context.SaveChanges();
-            return true;
+            return new(dbUser);
         }
     }
 }

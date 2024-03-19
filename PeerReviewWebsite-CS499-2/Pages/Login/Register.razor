@@ -134,7 +134,7 @@
                 Email = email,
                 Password = password
             });
-        myStateContainer.SetValue(user);
+        myStateContainer.UpdateUser(user);
 
         // Test creating and adding roles
         Role role1 = await Service.CreateRoleAsync(new Role {

@@ -1,7 +1,7 @@
 ﻿@page "/reviewer"
 
 @using PeerReviewWebsite.Classes.Data.Account
-@inject MyStateContainer myStateContainer
+@inject MyStateContainer state
 @inherits OwningComponentBase<AccountService>
 
 <PageTitle>Reviewer</PageTitle>
@@ -17,11 +17,9 @@
 <Footer/>
 
 @code {
-    private User user;
     private bool isModerator;
     protected override async Task OnInitializedAsync()
     {
-        user = myStateContainer.Value;
-        isModerator = await Service.UserIsModerator(user);
+        isModerator = await Service.UserIsModerator(state.User);
     }
 }

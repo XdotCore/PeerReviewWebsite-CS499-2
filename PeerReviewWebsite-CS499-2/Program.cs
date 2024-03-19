@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using PeerReviewWebsite.Classes.Data;
 using PeerReviewWebsite.Classes.Data.Account;
 using PeerReviewWebsite.Classes.Data.Review;
+using PeerReviewWebsite.Pages.Download;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);

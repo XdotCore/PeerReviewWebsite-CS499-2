@@ -1,7 +1,7 @@
 ﻿@page "/profile"
 
 @using PeerReviewWebsite.Classes.Data.Account
-@inject MyStateContainer myStateContainer
+@inject MyStateContainer state
 @inherits OwningComponentBase<AccountService>
 
 <PageTitle>Profile</PageTitle>
@@ -10,22 +10,20 @@
 
     <NavigationBar activePage=NavigationBar.Page.Profile showModeratorPage=isModerator/>
 
-    <h1>Hello @user.FirstName @user.LastName!</h1>
+    <h1>Hello @state.User.FirstName @state.User.LastName!</h1>
     <h2> Profile Page </h2>
 
-    <p>User Id: @user.Id</p>
-    <p>Email: @user.Email </p>
+    <p>User Id: @state.User.Id</p>
+    <p>Email: @state.User.Email </p>
 
 </body>
 
 <Footer />
 
 @code {
-    private User user;
     private bool isModerator;
     protected override async Task OnInitializedAsync()
     {
-        user = myStateContainer.Value;
-        isModerator = await Service.UserIsModerator(user);
+        isModerator = await Service.UserIsModerator(state.User);
     }
 }

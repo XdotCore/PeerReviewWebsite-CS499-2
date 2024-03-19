@@ -1,7 +1,7 @@
 ﻿@page "/moderator"
 
 @using PeerReviewWebsite.Classes.Data.Account
-@inject MyStateContainer myStateContainer
+@inject MyStateContainer state
 @inherits OwningComponentBase<AccountService>
 
 <PageTitle>Moderator</PageTitle>
@@ -18,9 +18,7 @@
 <Footer/>
 
 @code {
-    private User user;
     protected override void OnInitialized()
     {
-        user = myStateContainer.Value;
     }
 }

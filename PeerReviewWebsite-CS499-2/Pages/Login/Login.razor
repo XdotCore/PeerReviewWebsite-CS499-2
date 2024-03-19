@@ -49,7 +49,7 @@
 
         Console.WriteLine("Found user!");
         ShowMessage = false;
-        myStateContainer.SetValue(user);
+        myStateContainer.UpdateUser(user);
         PrintInput();
         UriHelper.NavigateTo($"/profile");
     }

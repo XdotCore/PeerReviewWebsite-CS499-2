@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace PeerReviewWebsite.Classes.Data.Review {
+
     public class ReviewService(WebsiteDbContext context) {
         /// <summary>
         /// Gets the <see cref="Document"/> with the given id

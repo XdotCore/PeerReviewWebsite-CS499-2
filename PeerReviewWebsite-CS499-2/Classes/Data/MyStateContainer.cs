@@ -6,11 +6,11 @@ using PeerReviewWebsite.Classes.Data.Account;
 // <summary>
 public class MyStateContainer
 {
-    public User Value { get; set; }
+    public User User { get; set; }
     public event Action OnStateChange;
-    public void SetValue(User value)
+    public void UpdateUser(User value)
     {
-        this.Value = value;
+        this.User = value;
         NotifyStateChanged();
     }
     private void NotifyStateChanged() => OnStateChange?.Invoke();
