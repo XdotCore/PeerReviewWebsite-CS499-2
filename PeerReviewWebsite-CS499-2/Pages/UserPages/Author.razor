@@ -74,6 +74,9 @@
         await PopulateDocs();
     }
 
+    /// <summary>
+    /// Creates and uploads the document and attaches it to the user
+    /// </summary>
     private async Task UploadDocument() {
         if (!ValidateUploadInput())
             return;
@@ -95,16 +98,27 @@
         await PopulateDocs();
     }
 
+    /// <summary>
+    /// Makes sure the input is valid
+    /// </summary>
+    /// <returns><see langword="true"/> if everything is fine for upload, <see langword="false"/> otherwise</returns>
     private bool ValidateUploadInput() => !string.IsNullOrEmpty(title) &&
                                           !string.IsNullOrEmpty(description) && 
                                           !string.IsNullOrEmpty(file?.Name) &&
                                           validExtensions.Contains(Path.GetExtension(file.Name));
 
+    /// <summary>
+    /// The function that monitors file choice changes
+    /// </summary>
+    /// <param name="e">The args of the event it is monitoring</param>
     private void FileChanged(InputFileChangeEventArgs e) {
         if (e.FileCount == 1)
             file = e.File;
     }
 
+    /// <summary>
+    /// Gets all the documents for the user so that they can be listed later synchronously
+    /// </summary>
     private async Task PopulateDocs() {
         docs.Clear();
         foreach (int id in state.User.OwnedDocuments)

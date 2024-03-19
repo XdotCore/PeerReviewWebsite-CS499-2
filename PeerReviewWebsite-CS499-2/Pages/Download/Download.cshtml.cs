@@ -1,22 +1,24 @@
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.Extensions.DependencyInjection;
 using PeerReviewWebsite.Classes.Data.Review;
-using System;
 using System.Threading.Tasks;
 
 namespace PeerReviewWebsite.Pages.Download {
 
     public class DownloadModel : PageModel {
-        ReviewService p;
-        public DownloadModel(ReviewService a) {
-            p = a;
+        ReviewService Service { get; set; }
+
+        // Taking the suggestion of making this a primary constructor breaks this
+        // Probably due to how it interacts with c# reflection
+#pragma warning disable IDE0290 // Use primary constructor
+        public DownloadModel(ReviewService service) {
+            Service = service;
         }
+#pragma warning restore IDE0290 // Use primary constructor
 
         public async Task<IActionResult> OnGetAsync(int docId) {
-            Document doc = await p.GetDocumentAsync(docId);
+            Document doc = await Service.GetDocumentAsync(docId);
             byte[] data = doc.Content;
 
             FileExtensionContentTypeProvider typeProvider = new();
