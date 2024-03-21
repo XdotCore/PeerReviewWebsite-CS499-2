@@ -6,8 +6,8 @@ using Microsoft.Extensions.Hosting;
 using PeerReviewWebsite.Classes.Data;
 using PeerReviewWebsite.Classes.Data.Account;
 using PeerReviewWebsite.Classes.Data.Review;
-using PeerReviewWebsite.Pages.Download;
 using System;
+using System.Runtime.InteropServices;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
@@ -15,7 +15,15 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<MyStateContainer>();
 
 // Add connections
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+string connectionString = null;
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+    connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+    connectionString = builder.Configuration.GetConnectionString("LinuxConnection");
+
+if (connectionString is null)
+    throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
 builder.Services.AddDbContext<WebsiteDbContext>(options => options.UseSqlServer(connectionString));
 
 // Add services
