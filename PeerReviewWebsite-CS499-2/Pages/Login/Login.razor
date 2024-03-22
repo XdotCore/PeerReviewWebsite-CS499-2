@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using PeerReviewWebsite.Classes.Data
 @using PeerReviewWebsite.Classes.Data.Account
 @inject MyStateContainer myStateContainer
 @inject NavigationManager UriHelper
@@ -49,7 +50,7 @@
 
         Console.WriteLine("Found user!");
         ShowMessage = false;
-        myStateContainer.UpdateUser(user);
+        myStateContainer.User = user;
         PrintInput();
         UriHelper.NavigateTo($"/profile");
     }

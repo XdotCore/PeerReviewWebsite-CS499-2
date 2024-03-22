@@ -2,11 +2,13 @@
 
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.Extensions.DependencyInjection
+@using PeerReviewWebsite.Classes.Data
 @using PeerReviewWebsite.Classes.Data.Account
 @using PeerReviewWebsite.Classes.Data.Review
 @using System.IO
 @using System.Diagnostics
 @inject MyStateContainer state
+@inject IJSRuntime JSRuntime
 @inherits OwningComponentBase
 
 <PageTitle>Author</PageTitle>
@@ -36,7 +38,8 @@
     else if (tab == Tab.Browse) {
         <ul>
             @foreach(Document doc in docs) {
-                <li><a href="/download/id=@doc.Id" target="_blank">@doc.FileName</a></li>
+                // @onclick:preventDefault prevents the href from activating since we are using custom behavior
+                <li><a href="" @onclick=@(() => GotoDownload(doc)) @onclick:preventDefault target="_blank">@doc.FileName</a></li>
             }
         </ul>
     }
@@ -93,7 +96,7 @@
             Description = description
         });
 
-        state.UpdateUser(await AccountService.AddDocumentToUserAsync(state.User, newDoc));
+        state.User = await AccountService.AddDocumentToUserAsync(state.User, newDoc);
 
         await PopulateDocs();
     }
@@ -123,6 +126,14 @@
         docs.Clear();
         foreach (int id in state.User.OwnedDocuments)
             docs.Add(await ReviewService.GetDocumentAsync(id));
+    }
+
+    /// <summary>
+    /// Sets the state current document then opens the download in a new tab
+    /// </summary>
+    private async Task GotoDownload(Document doc) {
+        state.CurrentDoc = doc;
+        await JSRuntime.InvokeVoidAsync("open", "/download", "_blank");
     }
 
 }
