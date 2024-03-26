@@ -9,6 +9,7 @@
 @using System.Diagnostics
 @inject MyStateContainer state
 @inject IJSRuntime JSRuntime
+@inject NavigationManager UriHelper
 @inherits OwningComponentBase
 
 <PageTitle>Author</PageTitle>
@@ -40,6 +41,7 @@
             @foreach(Document doc in docs) {
                 // @onclick:preventDefault prevents the href from activating since we are using custom behavior
                 <li><a href="" @onclick=@(() => GotoDownload(doc)) @onclick:preventDefault target="_blank">@doc.FileName</a></li>
+                <button type="button" @onclick=@(() => RenderDoc(doc))>Render</button>
             }
         </ul>
     }
@@ -136,4 +138,9 @@
         await JSRuntime.InvokeVoidAsync("open", "/download", "_blank");
     }
 
+    private void RenderDoc(Document doc)
+    {
+        state.CurrentDoc = doc;
+        UriHelper.NavigateTo($"/viewer");
+    }
 }
