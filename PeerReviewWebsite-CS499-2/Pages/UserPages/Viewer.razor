@@ -20,7 +20,7 @@
 
 <script src="lib/pdfjs/build/pdf.mjs" type="module"></script>
 <script type="text/javascript">
-    async function renderDoc(Data) {
+    function renderDoc(Data) {
         // atob() is used to convert base64 encoded PDF to binary-like data.
         // (See also https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/
         // Base64_encoding_and_decoding.)
@@ -120,16 +120,23 @@
 </script>
 
 <PageTitle>Viewer</PageTitle>
-<br /><br />
-<button type="button" @onclick=RenderDoc>Load PDF</button>
 
-<div>
-    <button id="prev">Previous</button>
-    <button id="next">Next</button>
-    &nbsp; &nbsp;
-    <span>Page: <span id="page_num"></span> / <span id="page_count"></span></span>
-</div>
-<canvas id="the-canvas"></canvas>
+<body>
+
+    <NavigationBar activePage=NavigationBar.Page.Explore showModeratorPage=isModerator />
+    <br /><br />
+    <button type="button" @onclick=RenderDoc>Load PDF</button>
+
+    <div>
+        <button id="prev">Previous</button>
+        <button id="next">Next</button>
+        &nbsp; &nbsp;
+        <span>Page: <span id="page_num"></span> / <span id="page_count"></span></span>
+    </div>
+    <canvas id="the-canvas"></canvas>
+
+</body>
+
 <Footer />
 
 
@@ -146,6 +153,11 @@
         ReviewService = ScopedServices.GetRequiredService<ReviewService>();
 
         isModerator = await AccountService.UserIsModerator(state.User);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender) {
+        if (firstRender)
+            await RenderDoc();
     }
 
     private async Task RenderDoc()
