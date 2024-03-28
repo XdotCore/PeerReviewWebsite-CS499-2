@@ -77,6 +77,7 @@ namespace PeerReviewWebsite.Classes.Data {
                 entity.Property(doc => doc.FileName);
                 entity.Property(doc => doc.Content);
                 entity.Property(doc => doc.Author);
+                entity.Property(doc => doc.Comments).HasConversion(idsAsString, idsComparer);
                 entity.Property(doc => doc.Title);
                 entity.Property(doc => doc.Description);
             });
@@ -86,6 +87,8 @@ namespace PeerReviewWebsite.Classes.Data {
                 entity.ToTable("Comments");
                 entity.HasKey(comment => comment.Id);
                 entity.Property(comment => comment.Status);
+                entity.Property(comment => comment.Author);
+                entity.Property(comment => comment.Document);
                 entity.Property(comment => comment.Content);
             });
         }

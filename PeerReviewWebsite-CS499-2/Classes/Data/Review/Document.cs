@@ -1,4 +1,6 @@
-﻿namespace PeerReviewWebsite.Classes.Data.Review {
+﻿using System.Collections.Generic;
+
+namespace PeerReviewWebsite.Classes.Data.Review {
     // TODO: finish this stub class
     public class Document {
         public int Id { get; set; }
@@ -6,6 +8,7 @@
         public string FileName { get; set; }
         public byte[] Content { get; set; }
         public int Author { get; set; }
+        public HashSet<int> Comments { get; set; } = [];
         public string Title { get; set; }
         public string Description { get; set; }
 
@@ -22,6 +25,7 @@
             Status = copy.Status;
             FileName = copy.FileName;
             Author = copy.Author;
+            Comments.UnionWith(copy.Comments);
             Title = copy.Title;
             Description = copy.Description;
         }

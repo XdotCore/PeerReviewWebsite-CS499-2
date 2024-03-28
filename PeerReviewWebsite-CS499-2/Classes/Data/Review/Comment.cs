@@ -3,6 +3,8 @@
     public class Comment {
         public int Id { get; set; }
         public CommentStatus Status { get; set; }
+        public int Author { get; set; }
+        public int Document { get; set; }
         public string Content { get; set; }
 
         /// <summary>
@@ -16,6 +18,8 @@
         public Comment(Comment copy) {
             Id = copy.Id;
             Status = copy.Status;
+            Author = copy.Author;
+            Document = copy.Document;
             Content = copy.Content;
         }
     }

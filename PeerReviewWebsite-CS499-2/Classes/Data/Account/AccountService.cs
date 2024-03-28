@@ -148,7 +148,7 @@ namespace PeerReviewWebsite.Classes.Data.Account {
         /// </summary>
         /// <param name="user">The <see cref="User"/> to add the <see cref="Document"/> to</param>
         /// <param name="doc">The <see cref="Document"/> to add to the <see cref="User"/></param>
-        /// <returns><see langword="true"/> if the document was successfully added to the user, <see langword="false"/> otherwise</returns>
+        /// <returns>The new <see cref="User"/> state if successful, the old state otherwise</returns>
         public async Task<User> AddDocumentToUserAsync(User user, Document doc) {
             User dbUser = await context.Users.Where(u => u.Id == user.Id).FirstOrDefaultAsync();
             if (dbUser is null)
@@ -164,6 +164,36 @@ namespace PeerReviewWebsite.Classes.Data.Account {
             context.Documents.Update(dbDoc);
             context.SaveChanges();
             return new(dbUser);
+        }
+
+        /// <summary>
+        /// Adds the given <see cref="Comment"/> to the given <see cref="Document"/>, as well as the given <see cref="User"/>
+        /// </summary>
+        /// <param name="user">The <see cref="User"/> to add the <see cref="Comment"/> to</param>
+        /// <param name="doc">The <see cref="Document"/> to add the <see cref="Comment"/> to</param>
+        /// <param name="comment">The <see cref="Comment"/> to add the to the <see cref="User"/></param>
+        /// <returns>The new <see cref="User"/> and <see cref="Document"/> state if successful, the old state otherwise</returns>
+        public async Task<(User, Document)> AddCommentToDocumentAsync(User user, Document doc, Comment comment) {
+            User dbUser = await context.Users.Where(u => u.Id == user.Id).FirstOrDefaultAsync();
+            if (dbUser is null)
+                return (user, doc);
+
+            Document dbDoc = await context.Documents.Where(d => d.Id == doc.Id).FirstOrDefaultAsync();
+            if (dbDoc is null)
+                return (user, doc);
+
+            Comment dbComment = await context.Comments.Where(c => c.Id == comment.Id).FirstOrDefaultAsync();
+            if (dbComment is null)
+                return (user, doc);
+
+            dbUser.OwnedComments.Add(dbComment.Id);
+            context.Users.Update(dbUser);
+            dbDoc.Comments.Add(dbComment.Id);
+            context.Documents.Update(dbDoc);
+            dbComment.Author = dbUser.Id;
+            context.Comments.Update(dbComment);
+            context.SaveChanges();
+            return (new User(dbUser), new Document(dbDoc));
         }
     }
 }

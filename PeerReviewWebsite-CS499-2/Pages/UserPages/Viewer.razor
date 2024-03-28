@@ -130,12 +130,31 @@
     <NavigationBar activePage=NavigationBar.Page.Explore showModeratorPage=isModerator />
     <br /><br />
 
-    <div>
-        <button @onclick=@(() => ZoomIn())>Zoom in</button>
-        <button @onclick=@(() => ZoomOut())>Zoom out</button>
-        <span>Page: <span id="page_num"></span> / <span id="page_count"></span></span>
+    <div class="column">
+        <div>
+            <button @onclick=ZoomIn>Zoom in</button>
+            <button @onclick=ZoomOut>Zoom out</button>
+            <span>Page: <span id="page_num"></span> / <span id="page_count"></span></span>
+        </div>
+        <div id="pagesDiv" class="pdfViewer"></div>
     </div>
-    <div id="pagesDiv" class="pdfViewer"></div>
+
+    <div class="column">
+        <form @onsubmit=UploadComment>
+
+            <p>Comment:</p>
+            <textarea placeholder="Description" rows="5" cols="80" @bind=commentText />
+            <button class="submit" type="submit">Post Comment</button>
+
+        </form>
+
+        @foreach((User user, Comment comment) in comments) {
+            <div class="comment">
+                <p>@user.FirstName @user.LastName</p>
+                <p>@comment.Content</p>
+            </div>
+        }
+    </div>
 
 </body>
 
@@ -149,6 +168,8 @@
     private ReviewService ReviewService { get; set; }
 
     private double scale = 1;
+    private string commentText = "";
+    private List<(User, Comment)> comments = new();
 
     private bool isModerator;
     protected override async Task OnInitializedAsync()
@@ -157,6 +178,8 @@
         ReviewService = ScopedServices.GetRequiredService<ReviewService>();
 
         isModerator = await AccountService.UserIsModerator(state.User);
+
+        await PopulateComments();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender) {
@@ -179,5 +202,27 @@
     private async Task ZoomOut() {
         scale -= .1;
         await RenderDoc();
+    }
+
+    private async Task UploadComment() {
+        Comment newComment = await ReviewService.CreateCommentAsync(new Comment {
+            Content = commentText,
+        });
+
+        (state.User, state.CurrentDoc) = await AccountService.AddCommentToDocumentAsync(state.User, state.CurrentDoc, newComment);
+
+        commentText = "";
+        await PopulateComments();
+    }
+
+    private async Task PopulateComments() {
+        comments.Clear();
+        foreach (int id in state.CurrentDoc.Comments) {
+            Comment c = await ReviewService.GetCommentAsync(id);
+            User u = await AccountService.GetUserAsync(c.Author);
+            comments.Add((u, c));
+        }
+
+        StateHasChanged();
     }
 }
