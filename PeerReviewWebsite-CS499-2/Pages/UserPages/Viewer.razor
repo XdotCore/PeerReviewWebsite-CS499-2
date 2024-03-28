@@ -11,12 +11,6 @@
 @inject IJSRuntime JSRuntime
 @inject NavigationManager UriHelper
 @inherits OwningComponentBase
-<style>
-    #the-canvas {
-        border: 1px solid black;
-        direction: ltr;
-    }
-</style>
 
 <script src="lib/pdfjs/build/pdf.mjs" type="module"></script>
 <script type="text/javascript">
@@ -33,20 +27,21 @@
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'lib/pdfjs/build/pdf.worker.mjs';
 
         var pdfDoc = null,
-            pageNum = 1,
-            pageRendering = false,
-            pageNumPending = null,
             scale = 1.5,
-            canvas = document.getElementById('the-canvas'),
-            ctx = canvas.getContext('2d');
+            pagesDiv = document.getElementById('pagesDiv')
 
         function renderPage(num) {
-            pageRendering = true;
             // Using promise to fetch the page
             pdfDoc.getPage(num).then(function (page) {
                 var viewport = page.getViewport({ scale: scale });
+
+                // make a new canvas for each page
+                var canvas = document.createElement('canvas');
                 canvas.height = viewport.height;
                 canvas.width = viewport.width;
+                pagesDiv.appendChild(canvas);
+
+                var ctx = canvas.getContext('2d');
 
                 // Render PDF page into canvas context
                 var renderContext = {
@@ -57,54 +52,14 @@
 
                 // Wait for rendering to finish
                 renderTask.promise.then(function () {
-                    pageRendering = false;
-                    if (pageNumPending !== null) {
-                        // New page rendering is pending
-                        renderPage(pageNumPending);
-                        pageNumPending = null;
-                    }
+                    if (num < pdfDoc.numPages)
+                        renderPage(num + 1);
                 });
             });
 
             // Update page counters
             document.getElementById('page_num').textContent = num;
         }
-
-        /**
-            * If another page rendering in progress, waits until the rendering is
-            * finised. Otherwise, executes rendering immediately.
-            */
-        function queueRenderPage(num) {
-            if (pageRendering) {
-                pageNumPending = num;
-            } else {
-                renderPage(num);
-            }
-        }
-
-        /**
-            * Displays previous page.
-            */
-        function onPrevPage() {
-            if (pageNum <= 1) {
-                return;
-            }
-            pageNum--;
-            queueRenderPage(pageNum);
-        }
-        document.getElementById('prev').addEventListener('click', onPrevPage);
-
-        /**
-            * Displays next page.
-            */
-        function onNextPage() {
-            if (pageNum >= pdfDoc.numPages) {
-                return;
-            }
-            pageNum++;
-            queueRenderPage(pageNum);
-        }
-        document.getElementById('next').addEventListener('click', onNextPage);
 
         /**
             * Asynchronously downloads PDF.
@@ -114,7 +69,7 @@
             document.getElementById('page_count').textContent = pdfDoc.numPages;
 
             // Initial/first page rendering
-            renderPage(pageNum);
+            renderPage(1);
         });
     }
 </script>
@@ -125,15 +80,11 @@
 
     <NavigationBar activePage=NavigationBar.Page.Explore showModeratorPage=isModerator />
     <br /><br />
-    <button type="button" @onclick=RenderDoc>Load PDF</button>
 
     <div>
-        <button id="prev">Previous</button>
-        <button id="next">Next</button>
-        &nbsp; &nbsp;
         <span>Page: <span id="page_num"></span> / <span id="page_count"></span></span>
     </div>
-    <canvas id="the-canvas"></canvas>
+    <div id="pagesDiv"></div>
 
 </body>
 
@@ -162,8 +113,7 @@
 
     private async Task RenderDoc()
     {
-        Document doc = state.CurrentDoc;
-        byte[] data = doc.Content;
+        byte[] data = state.CurrentDoc.Content;
         string base64 = Convert.ToBase64String(data);
         await JSRuntime.InvokeVoidAsync("renderDoc", base64);
     }

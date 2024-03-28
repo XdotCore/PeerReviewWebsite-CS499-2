@@ -1,0 +1,12 @@
+﻿#pagesDiv {
+    border: 1px solid black;
+    direction: ltr;
+    width: 900px;
+    height: 1000px;
+    overflow: auto;
+    resize: vertical;
+}
+
+canvas {
+    border: 1px solid black;
+}
