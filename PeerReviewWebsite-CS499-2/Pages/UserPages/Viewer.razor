@@ -12,9 +12,10 @@
 @inject NavigationManager UriHelper
 @inherits OwningComponentBase
 
+<link rel="stylesheet" href="lib/pdfjs/web/viewer.css" />
 <script src="lib/pdfjs/build/pdf.mjs" type="module"></script>
 <script type="text/javascript">
-    function renderDoc(Data) {
+    function renderDoc(Data, scale) {
         // atob() is used to convert base64 encoded PDF to binary-like data.
         // (See also https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/
         // Base64_encoding_and_decoding.)
@@ -27,19 +28,58 @@
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'lib/pdfjs/build/pdf.worker.mjs';
 
         var pdfDoc = null,
-            scale = 1.5,
-            pagesDiv = document.getElementById('pagesDiv')
+            pagesDiv = document.getElementById('pagesDiv'),
+            root = document.querySelector(':root');
+
+        root.style.setProperty('--page-margin', '0 0');
+        root.style.setProperty('--page-border', '0');
 
         function renderPage(num) {
             // Using promise to fetch the page
             pdfDoc.getPage(num).then(function (page) {
+                var canvas, textLayer;
+
+                // find old page or make a new one
+                var pageDiv = document.querySelector(`.page[pageNum='${num}']`);
+                if (!pageDiv) {
+                    pageDiv = document.createElement('div');
+                    pageDiv.setAttribute("pageNum", num);
+                    pageDiv.classList.add('page');
+                    pagesDiv.appendChild(pageDiv);
+
+                    // add canvas for the pdf rendering
+                    canvas = document.createElement('canvas');
+                    canvas.id = `pdfCanvas${num}`;
+                    pageDiv.appendChild(canvas);
+
+                    // add div for the text selection layer
+                    textLayer = document.createElement('div');
+                    textLayer.id = `textLayer${num}`;
+                    textLayer.classList.add('textLayer');
+                    pageDiv.appendChild(textLayer);
+                }
+                else {
+                    canvas = pageDiv.childNodes.item(`pdfCanvas${num}`);
+                    textLayer = pageDiv.childNodes.item(`textLayer${num}`);
+                }
+
+                // set scale factor
+                pageDiv.style.setProperty('--scale-factor', scale);
+
                 var viewport = page.getViewport({ scale: scale });
 
                 // make a new canvas for each page
-                var canvas = document.createElement('canvas');
                 canvas.height = viewport.height;
                 canvas.width = viewport.width;
-                pagesDiv.appendChild(canvas);
+
+                // set each page div to the size of the page
+                pageDiv.style.width = canvas.width + 'px';
+                pageDiv.style.height = canvas.height + 'px';
+                // set size of pdfViewer to first page dimensions
+                if (num == 1) {
+                    pagesDiv.style.width = canvas.width + 'px';
+                    pagesDiv.style.height = canvas.height + 'px';
+                }
 
                 var ctx = canvas.getContext('2d');
 
@@ -52,6 +92,15 @@
 
                 // Wait for rendering to finish
                 renderTask.promise.then(function () {
+                    page.getTextContent().then(function (textContent) {
+                        pdfjsLib.renderTextLayer({
+                            textContentSource: textContent,
+                            container: textLayer,
+                            viewport: viewport,
+                            textDivs: []
+                        });
+                    });
+
                     if (num < pdfDoc.numPages)
                         renderPage(num + 1);
                 });
@@ -82,9 +131,11 @@
     <br /><br />
 
     <div>
+        <button @onclick=@(() => ZoomIn())>Zoom in</button>
+        <button @onclick=@(() => ZoomOut())>Zoom out</button>
         <span>Page: <span id="page_num"></span> / <span id="page_count"></span></span>
     </div>
-    <div id="pagesDiv"></div>
+    <div id="pagesDiv" class="pdfViewer"></div>
 
 </body>
 
@@ -96,6 +147,8 @@
 
     private AccountService AccountService { get; set; }
     private ReviewService ReviewService { get; set; }
+
+    private double scale = 1;
 
     private bool isModerator;
     protected override async Task OnInitializedAsync()
@@ -115,6 +168,16 @@
     {
         byte[] data = state.CurrentDoc.Content;
         string base64 = Convert.ToBase64String(data);
-        await JSRuntime.InvokeVoidAsync("renderDoc", base64);
+        await JSRuntime.InvokeVoidAsync("renderDoc", base64, scale);
+    }
+
+    private async Task ZoomIn() {
+        scale += .1;
+        await RenderDoc();
+    }
+
+    private async Task ZoomOut() {
+        scale -= .1;
+        await RenderDoc();
     }
 }
